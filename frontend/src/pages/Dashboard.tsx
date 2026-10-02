@@ -104,7 +104,8 @@ export default function Dashboard() {
 
   loadTickets();
 }, [search, status, priority, order, page]);
-  useEffect(() => {
+
+useEffect(() => {
   async function loadSummary() {
     try {
       const response = await getTicketSummary();
