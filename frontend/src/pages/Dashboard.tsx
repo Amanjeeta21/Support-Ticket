@@ -20,21 +20,19 @@ import type {
 export default function Dashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const navigate = useNavigate();
-  const [summary, setSummary] =
-    useState<TicketSummary>({
-      total: 0,
-      open: 0,
-      inProgress: 0,
-      resolved: 0,
-    });
+
+  const [summary, setSummary] = useState<TicketSummary>({
+    total: 0,
+    open: 0,
+    inProgress: 0,
+    resolved: 0,
+  });
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<Status | "">("");
-  const [priority, setPriority] =
-    useState<Priority | "">("");
+  const [priority, setPriority] = useState<Priority | "">("");
 
-  const [order, setOrder] =
-    useState<"asc" | "desc">("desc");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,81 +41,47 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function loadTickets() {
-    try {
-      setLoading(true);
-      setError("");
+  useEffect(() => {
+    async function loadTickets() {
+      try {
+        setLoading(true);
+        setError("");
 
-      const response = await getTickets({
-        search: search || undefined,
-        status: status || undefined,
-        priority: priority || undefined,
-        order,
-        page,
-        limit: 10,
-      });
+        const response = await getTickets({
+          search: search || undefined,
+          status: status || undefined,
+          priority: priority || undefined,
+          order,
+          page,
+          limit: 10,
+        });
 
-      setTickets(response.data);
-      setTotalPages(response.pagination.totalPages);
-    } catch (error) {
-      console.error(error);
-      setError("Failed to load tickets.");
-    } finally {
-      setLoading(false);
+        setTickets(response.data);
+        setTotalPages(response.pagination.totalPages);
+        setTotalTickets(response.pagination.total);
+      } catch (error) {
+        console.error(error);
+        setError("Failed to load tickets.");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  async function loadSummary() {
-    try {
-      const response = await getTicketSummary();
-      setSummary(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+    loadTickets();
+  }, [search, status, priority, order, page]);
 
   useEffect(() => {
-  async function loadTickets() {
-    try {
-      setLoading(true);
-      setError("");
-
-      const response = await getTickets({
-        search: search || undefined,
-        status: status || undefined,
-        priority: priority || undefined,
-        order,
-        page,
-        limit: 10,
-      });
-
-      setTickets(response.data);
-      setTotalPages(response.pagination.totalPages);
-      setTotalTickets(response.pagination.total);
-    } catch (error) {
-      console.error(error);
-      setError("Failed to load tickets.");
-    } finally {
-      setLoading(false);
+    async function loadSummary() {
+      try {
+        const response = await getTicketSummary();
+        setSummary(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }
 
-  loadTickets();
-}, [search, status, priority, order, page]);
-
-useEffect(() => {
-  async function loadSummary() {
-    try {
-      const response = await getTicketSummary();
-      setSummary(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  loadSummary();
-}, []);
-
+    loadSummary();
+  }, []);
 
   function handleSearchChange(value: string) {
     setSearch(value);
@@ -144,13 +108,13 @@ useEffect(() => {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
-          <h1 className="text-3xl font-bold uppercase tracking-wide text-[#4a3024] sm:text-4xl">
-            Support Ticket Dashboard
-          </h1>
+            <h1 className="text-3xl font-bold uppercase tracking-wide text-[#4a3024] sm:text-4xl">
+              Support Ticket Dashboard
+            </h1>
 
-          <p className="mt-3 text-[#765848]">
-            Manage and track customer support tickets.
-          </p>
+            <p className="mt-3 text-[#765848]">
+              Manage and track customer support tickets.
+            </p>
           </div>
 
           <button
@@ -164,7 +128,6 @@ useEffect(() => {
         <SummaryCards summary={summary} />
 
         <section className="mt-8 rounded-xl border border-[#d8c4b2] bg-[#eadccf] shadow-sm">
-
           <div className="border-b border-[#d8c4b2] p-5 text-left">
             <h2 className="text-xl font-semibold uppercase tracking-wide text-[#4a3024]">
               Tickets
@@ -176,7 +139,8 @@ useEffect(() => {
             </p>
 
             <p className="mt-1 text-sm text-slate-500">
-              Showing {tickets.length} of {totalPages > 0 ? "matching" : ""} tickets
+              Showing {tickets.length} of{" "}
+              {totalPages > 0 ? "matching" : ""} tickets
             </p>
           </div>
 
@@ -235,10 +199,13 @@ useEffect(() => {
 
                   <tbody>
                     {tickets.map((ticket) => (
-                      <tr key={ticket.id}onClick={() =>
-                               navigate(`/tickets/${ticket.id}`)}
-                          className="cursor-pointer border-t border-[#dcc8b6] text-[#4a3024] hover:bg-[#e3d3c3]"
-                    >
+                      <tr
+                        key={ticket.id}
+                        onClick={() =>
+                          navigate(`/tickets/${ticket.id}`)
+                        }
+                        className="cursor-pointer border-t border-[#dcc8b6] text-[#4a3024] hover:bg-[#e3d3c3]"
+                      >
                         <td className="px-5 py-4 font-medium">
                           {ticket.title}
                         </td>
@@ -248,11 +215,11 @@ useEffect(() => {
                         </td>
 
                         <td className="px-5 py-4">
-                             <TicketBadge value={ticket.priority} />
+                          <TicketBadge value={ticket.priority} />
                         </td>
 
                         <td className="px-5 py-4">
-                             <TicketBadge value={ticket.status} />
+                          <TicketBadge value={ticket.status} />
                         </td>
 
                         <td className="px-5 py-4 text-sm text-slate-500">
