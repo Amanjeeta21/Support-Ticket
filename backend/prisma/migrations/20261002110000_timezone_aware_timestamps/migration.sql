@@ -1,0 +1,5 @@
+ALTER TABLE "Ticket"
+  ALTER COLUMN "createdAt" TYPE TIMESTAMPTZ(3)
+    USING "createdAt" AT TIME ZONE 'UTC',
+  ALTER COLUMN "updatedAt" TYPE TIMESTAMPTZ(3)
+    USING "updatedAt" AT TIME ZONE 'UTC';
