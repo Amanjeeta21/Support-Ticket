@@ -1,4 +1,13 @@
+node_modules/
+dist/
 .env
 .env.*
 !.env.example
-!.env.*.example
+
+.vite/
+coverage/
+
+*.log
+
+.DS_Store
+Thumbs.db
