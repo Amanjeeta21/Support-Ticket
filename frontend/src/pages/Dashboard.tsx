@@ -118,6 +118,7 @@ useEffect(() => {
   loadSummary();
 }, []);
 
+
   function handleSearchChange(value: string) {
     setSearch(value);
     setPage(1);
